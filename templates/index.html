@@ -14,11 +14,12 @@
                 <th>Stock</th>
                 <th>Quantity</th>
                 <th>Price</th>
+                <th>Price Last Updated</th>
             </tr>
             {% for stock, price in prices.items() %}
             <tr>
                 <td>{{ stock }}</td>
-                <td>{{ quantity }}</td>
+                <td>{{ stocks[stock] }}</td>
                 <td>
                     {% if price is number %}
                         ${{ "%.2f"|format(price) }}
@@ -26,11 +27,10 @@
                         {{ price }}
                     {% endif %}
                 </td>
-                {% if errors.get(stock) %}
-                <td>Error: {{ errors[stock] }}</td>
-                {% endif %}
+                <td>{{ timestamps[stock]|default("N/A") }}</td>
             </tr>
             {% endfor %}
+
         </table>
         <div class="total">Total Value: ${{ "{:,.2f}".format(total) }}</div>
         <div class="total">Value For Each Shareholder: ${{ "{:,.2f}".format(total/8) }}</div>
