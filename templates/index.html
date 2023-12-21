@@ -47,9 +47,10 @@
                 <td>$<strong>{{ "{:,.2f}".format(total/8) }}</strong></td>
                 
             </tr>
-            <tr data-label="Profit Loss">
+            {% set profit_loss = (total/8) - 1250 %}
+            <tr data-label="Profit Loss" style="background-color: {% if profit_loss > 0 %}#4CAF50{% elif profit_loss < 0 %}red{% else %}yellow{% endif %};">
                 <td colspan="3" style="text-align: right;"><strong>Profit/Loss:</strong></td>
-                <td>$<strong>{{ "{:,.2f}".format((total/8) - 1250) }}</strong></td>
+                <td>$<strong>{{ "{:,.2f}".format(profit_loss) }}</strong></td>
             </tr>
         </table>        
         <div id="attribution">
