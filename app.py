@@ -1,4 +1,6 @@
 from flask import Flask, render_template
+from datetime import datetime, timedelta
+import pytz
 import requests
 import json
 import os 
@@ -9,7 +11,7 @@ app = Flask(__name__)
 
 # Alpha Vantage API details
 API_URL = "https://www.alphavantage.co/query"
-API_KEY = ""
+API_KEY = "3J86W53X6IK7QYA8"
 
 # Caching
 CACHE_DIR = "cache"
@@ -28,12 +30,23 @@ def is_cache_valid(filename):
     try:
         if not os.path.exists(filename):
             return False
-        if time.time() - os.path.getmtime(filename) > CACHE_DURATION:
+
+        now = datetime.now(pytz.timezone('US/Eastern'))
+        if not (9 <= now.hour < 17):  # Check if current time is between 9 AM and 5 PM EST
+            return True  # Outside trading hours, consider cache always valid
+
+        file_mod_time = datetime.fromtimestamp(os.path.getmtime(filename))
+        file_mod_time = file_mod_time.replace(tzinfo=pytz.timezone('US/Eastern'))
+
+        # Check if cache is older than 30 minutes
+        if now - file_mod_time > timedelta(minutes=30):
             return False
+
         return True
     except Exception as e:
         print(f"Error checking cache validity for file {filename}: {e}")
         return False
+
 
 
 def read_cache(filename):
@@ -98,15 +111,23 @@ def get_stock_prices(symbol):
 def index():
     total_value = 0
     prices = {}
-    timestamps = {}
+    formatted_timestamps = {}
     for stock, quantity in stocks.items():
         price, timestamp = get_stock_prices(stock)
         if price is not None:
             total_value += price * quantity
         prices[stock] = price if price is not None else "N/A"
-        timestamps[stock] = timestamp
+        
+        # Format the timestamp
+        if timestamp:
+            # Assuming the timestamp is in UTC, adjust if it's in a different timezone
+            tz_info = pytz.timezone('UTC')
+            formatted_time = datetime.fromtimestamp(timestamp, tz_info).strftime('%Y-%m-%d %H:%M:%S %Z')
+            formatted_timestamps[stock] = formatted_time
+        else:
+            formatted_timestamps[stock] = "N/A"
 
-    return render_template('index.html', prices=prices, total=total_value, stocks=stocks, timestamps=timestamps)
+    return render_template('index.html', prices=prices, total=total_value, stocks=stocks, timestamps=formatted_timestamps)
 
 
 if __name__ == '__main__':
