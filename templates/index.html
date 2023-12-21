@@ -23,14 +23,14 @@
                 <td>{{ stocks[stock] }}</td>
                 <td>
                     {% if price is number %}
-                        ${{ "%.2f"|format(price) }}
+                        ${{ "{:,.2f}".format(price) }}
                     {% else %}
                         {{ price }}
                     {% endif %}
                 </td>
                 <td>
                     {% if price is number %}
-                        ${{ "%.2f"|format(stocks[stock] * price) }}
+                        ${{ "{:,.2f}".format(stocks[stock] * price) }}
                     {% else %}
                         N/A
                     {% endif %}
