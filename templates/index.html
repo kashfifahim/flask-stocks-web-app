@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Stock Portfolio</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <div class="container">
+        <h2>Family Stock Portfolio</h2>
+        <table>
+            <tr>
+                <th>Stock</th>
+                <th>Quantity</th>
+                <th>Price</th>
+            </tr>
+            {% for stock, price in prices.items() %}
+            <tr>
+                <td>{{ stock }}</td>
+                <td>{{ stocks[stock] }}</td>
+                <td>${{ "%.2f"|format(price) }}</td>
+            </tr>
+            {% endfor %}
+        </table>
+        <div class="total">Total Value: ${{ "%.2f"|format(total) }}</div>
+        <div class="total">Value For Each Shareholder: ${{ "%.2f"|format(total/8) }}</div>
+        <div id="attribution">
+            <p>&copy; 2023 <a href="https://linkedin.com/in/kashfifahim" target="_blank">Kashfi Fahim</a>.  All Rights Reserved.</p>
+        </div>
+    </div>
+    
+</body>
+</html>
