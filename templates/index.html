@@ -18,8 +18,11 @@
             {% for stock, price in prices.items() %}
             <tr>
                 <td>{{ stock }}</td>
-                <td>{{ stocks[stock] }}</td>
-                <td>${{ "%.2f"|format(price) }}</td>
+                <td>{{ quantity }}</td>
+                <td>{{ price }}</td>
+                {% if errors.get(stock) %}
+                <td>Error: {{ errors[stock] }}</td>
+                {% endif %}
             </tr>
             {% endfor %}
         </table>

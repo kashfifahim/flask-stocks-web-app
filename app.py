@@ -98,11 +98,18 @@ def get_stock_prices(symbol):
 def index():
     total_value = 0
     prices = {}
+    errors = {}
     for stock, quantity in stocks.items():
         price = get_stock_prices(stock)
-        total_value += price * quantity
-        prices[stock] = price
-    return render_template('index.html', prices=prices, total=total_value, stocks=stocks)
+        if price is not None:
+            total_value += price * quantity
+            prices[stock] = price
+        else:
+            # Handle the scenario where price is None
+            errors[stock] = "Price data unavailable"
+            prices[stock] = "N/A"  # You can set a placeholder like "N/A" or 0
+
+    return render_template('index.html', prices=prices, total=total_value, stocks=stocks, errors=errors)
 
 
 if __name__ == '__main__':
