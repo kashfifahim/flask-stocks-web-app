@@ -14,6 +14,7 @@
                 <th>Stock</th>
                 <th>Quantity</th>
                 <th>Price</th>
+                <th>Total Equity</th>
                 <th>Price Last Updated</th>
             </tr>
             {% for stock, price in prices.items() %}
@@ -27,6 +28,7 @@
                         {{ price }}
                     {% endif %}
                 </td>
+                <td>${{ "%.2f"|format(stocks[stock] * price) }}</td>
                 <td>{{ timestamps[stock] }}</td>
             </tr>
             {% endfor %}

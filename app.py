@@ -11,7 +11,7 @@ app = Flask(__name__)
 
 # Alpha Vantage API details
 API_URL = "https://www.alphavantage.co/query"
-API_KEY = "3J86W53X6IK7QYA8"
+API_KEY = "VTD316CW23GAMR3H"
 
 # Caching
 CACHE_DIR = "cache"
@@ -118,12 +118,11 @@ def index():
             total_value += price * quantity
         prices[stock] = price if price is not None else "N/A"
         
-        # Format the timestamp
+        # Convert and format the timestamp from UTC to EST
         if timestamp:
-            # Assuming the timestamp is in UTC, adjust if it's in a different timezone
-            tz_info = pytz.timezone('UTC')
-            formatted_time = datetime.fromtimestamp(timestamp, tz_info).strftime('%Y-%m-%d %H:%M:%S %Z')
-            formatted_timestamps[stock] = formatted_time
+            utc_time = datetime.utcfromtimestamp(timestamp).replace(tzinfo=pytz.utc)
+            est_time = utc_time.astimezone(pytz.timezone('US/Eastern'))
+            formatted_timestamps[stock] = est_time.strftime('%Y-%m-%d %I:%M %p EST')
         else:
             formatted_timestamps[stock] = "N/A"
 
