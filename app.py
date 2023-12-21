@@ -9,7 +9,7 @@ app = Flask(__name__)
 
 # Alpha Vantage API details
 API_URL = "https://www.alphavantage.co/query"
-API_KEY = "Z26IND1A7LZTHK7V"
+API_KEY = "3J86W53X6IK7QYA8"
 
 # Caching
 CACHE_DIR = "cache"
@@ -63,22 +63,35 @@ stocks = {
 # Function to get stock prices
 def get_stock_prices(symbol):
     filename = cache_filename(symbol)
-    if is_cache_valid(filename):
-        cache_data = read_cache(filename)
-        return cache_data["price"], cache_data.get("timestamp")
 
     try:
-        # Make API call...
-        # On successful API response:
-        write_cache(filename, price)
-        return price, time.time()
-    except Exception as e:
-        # If API call fails, return the last cached price if available
-        if os.path.exists(filename):
-            cache_data = read_cache(filename)
-            return cache_data["price"], cache_data.get("timestamp")
+        # Attempt to make an API call first
+        response = requests.get(API_URL, {
+            "function": "GLOBAL_QUOTE",
+            "symbol": symbol,
+            "apikey": API_KEY
+        })
+        response.raise_for_status()  # Raises an error for bad status codes
+        data = response.json()
+        print(data)
+
+        if "Global Quote" in data and "05. price" in data["Global Quote"]:
+            price = float(data["Global Quote"]["05. price"])
+            # Successful API call, write data to cache
+            write_cache(filename, {"price": price, "timestamp": time.time()})
+            return price
         else:
-            return None, None
+            # Data not in expected format, fallback to cache
+            print(f"Unexpected data format for {symbol}: {data}")
+            return read_cache(filename)["price"] if os.path.exists(filename) else None
+
+    except requests.exceptions.RequestException as e:
+        # API call failed, fallback to cache
+        print(f"Request error for symbol {symbol}: {e}")
+        return read_cache(filename)["price"] if os.path.exists(filename) else None
+    except Exception as e:
+        print(f"An unexpected error occurred for symbol {symbol}: {e}")
+        return None
 
 
 @app.route('/')
