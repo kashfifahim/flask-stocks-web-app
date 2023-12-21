@@ -15,7 +15,7 @@
                 <th>Quantity</th>
                 <th>Price</th>
                 <th>Total Equity</th>
-                <th>Price Last Updated</th>
+                <th>Last Updated</th>
             </tr>
             {% for stock, price in prices.items() %}
             <tr>
@@ -28,15 +28,27 @@
                         {{ price }}
                     {% endif %}
                 </td>
-                <td>${{ "%.2f"|format(stocks[stock] * price) }}</td>
-                <td>{{ timestamps[stock] }}</td>
+                <td>
+                    {% if price is number %}
+                        ${{ "%.2f"|format(stocks[stock] * price) }}
+                    {% else %}
+                        N/A
+                    {% endif %}
+                </td>
+                <td>{{ timestamps[stock]|default("N/A") }}</td>
             </tr>
             {% endfor %}
-
-        </table>
-        <div class="total">Total Value: ${{ "{:,.2f}".format(total) }}</div>
-        <div class="total">Value For Each Shareholder: ${{ "{:,.2f}".format(total/8) }}</div>
-        
+            <tr>
+                <td colspan="3" style="text-align: right;"><strong>Total Equity:</strong></td>
+                <td>$<strong>{{ "{:,.2f}".format(total) }}</strong></td>
+                <th>Profit/Loss</th>
+            </tr>
+            <tr>
+                <td colspan="3" style="text-align: right;"><strong>Total Equity For Each Shareholder:</strong></td>
+                <td>$<strong>{{ "{:,.2f}".format(total/8) }}</strong></td>
+                <td>$<strong>{{ "{:,.2f}".format((total/8) - 1250) }}</strong></td>
+            </tr>
+        </table>        
         <div id="attribution">
             <p>&copy; 2023 <a href="https://linkedin.com/in/kashfifahim" target="_blank">Kashfi Fahim</a>.  All Rights Reserved.</p>
         </div>
