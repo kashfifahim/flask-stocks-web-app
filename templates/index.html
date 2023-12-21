@@ -19,7 +19,13 @@
             <tr>
                 <td>{{ stock }}</td>
                 <td>{{ quantity }}</td>
-                <td>{{ price }}</td>
+                <td>
+                    {% if price is number %}
+                        ${{ "%.2f"|format(price) }}
+                    {% else %}
+                        {{ price }}  <!-- This will display "N/A" or any error message -->
+                    {% endif %}
+                </td>
                 {% if errors.get(stock) %}
                 <td>Error: {{ errors[stock] }}</td>
                 {% endif %}
