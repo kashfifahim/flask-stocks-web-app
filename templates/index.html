@@ -19,33 +19,36 @@
             </tr>
             {% for stock, price in prices.items() %}
             <tr>
-                <td>{{ stock }}</td>
-                <td>{{ stocks[stock] }}</td>
-                <td>
+                <td data-label="Stock">{{ stock }}</td>
+                <td data-label="Quantity">{{ stocks[stock] }}</td>
+                <td data-label="Price">
                     {% if price is number %}
                         ${{ "{:,.2f}".format(price) }}
                     {% else %}
                         {{ price }}
                     {% endif %}
                 </td>
-                <td>
+                <td data-label="Equity">
                     {% if price is number %}
                         ${{ "{:,.2f}".format(stocks[stock] * price) }}
                     {% else %}
                         N/A
                     {% endif %}
                 </td>
-                <td>{{ timestamps[stock]|default("N/A") }}</td>
+                <td data-label="Time">{{ timestamps[stock]|default("N/A") }}</td>
             </tr>
             {% endfor %}
-            <tr>
-                <td colspan="3" style="text-align: right;"><strong>Total Equity:</strong></td>
+            <tr data-label="Total Portfolio Equity">
+                <td colspan="3" style="text-align: right;"><strong>Total Portfolio Equity:</strong></td>
                 <td>$<strong>{{ "{:,.2f}".format(total) }}</strong></td>
-                <th>Profit/Loss</th>
             </tr>
-            <tr>
+            <tr data-label="Total Shareholder Equity">
                 <td colspan="3" style="text-align: right;"><strong>Total Equity For Each Shareholder:</strong></td>
                 <td>$<strong>{{ "{:,.2f}".format(total/8) }}</strong></td>
+                
+            </tr>
+            <tr data-label="Profit Loss">
+                <td colspan="3" style="text-align: right;"><strong>Profit/Loss:</strong></td>
                 <td>$<strong>{{ "{:,.2f}".format((total/8) - 1250) }}</strong></td>
             </tr>
         </table>        
