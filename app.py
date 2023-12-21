@@ -9,7 +9,7 @@ app = Flask(__name__)
 
 # Alpha Vantage API details
 API_URL = "https://www.alphavantage.co/query"
-API_KEY = "3J86W53X6IK7QYA8"
+API_KEY = ""
 
 # Caching
 CACHE_DIR = "cache"
@@ -60,7 +60,6 @@ stocks = {
     "NOK": 2
 }
 
-# Function to get stock prices
 def get_stock_prices(symbol):
     filename = cache_filename(symbol)
 
@@ -73,25 +72,26 @@ def get_stock_prices(symbol):
         })
         response.raise_for_status()  # Raises an error for bad status codes
         data = response.json()
-        print(data)
 
         if "Global Quote" in data and "05. price" in data["Global Quote"]:
             price = float(data["Global Quote"]["05. price"])
             # Successful API call, write data to cache
-            write_cache(filename, {"price": price, "timestamp": time.time()})
-            return price
+            write_cache(filename, price)
+            return price, time.time()
         else:
             # Data not in expected format, fallback to cache
             print(f"Unexpected data format for {symbol}: {data}")
-            return read_cache(filename)["price"] if os.path.exists(filename) else None
+            cache_data = read_cache(filename) if os.path.exists(filename) else {"price": None}
+            return cache_data["price"], cache_data.get("timestamp")
 
     except requests.exceptions.RequestException as e:
         # API call failed, fallback to cache
         print(f"Request error for symbol {symbol}: {e}")
-        return read_cache(filename)["price"] if os.path.exists(filename) else None
+        cache_data = read_cache(filename) if os.path.exists(filename) else {"price": None}
+        return cache_data["price"], cache_data.get("timestamp")
     except Exception as e:
         print(f"An unexpected error occurred for symbol {symbol}: {e}")
-        return None
+        return None, None
 
 
 @app.route('/')
