@@ -23,8 +23,9 @@
             </tr>
             {% endfor %}
         </table>
-        <div class="total">Total Value: ${{ "%.2f"|format(total) }}</div>
-        <div class="total">Value For Each Shareholder: ${{ "%.2f"|format(total/8) }}</div>
+        <div class="total">Total Value: ${{ "{:,.2f}".format(total) }}</div>
+        <div class="total">Value For Each Shareholder: ${{ "{:,.2f}".format(total/8) }}</div>
+        
         <div id="attribution">
             <p>&copy; 2023 <a href="https://linkedin.com/in/kashfifahim" target="_blank">Kashfi Fahim</a>.  All Rights Reserved.</p>
         </div>
